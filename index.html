@@ -1,391 +1,500 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Fiyat Karşılaştırma - En Uygun Ürünü Bul</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Avcısı PRO</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .market-inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .market-input {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .market-input input[type="text"] {
-            flex: 1;
-        }
-
-        .market-input input[type="number"] {
-            width: 120px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 30px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            margin-top: 10px;
-        }
-
-        .results {
-            margin-top: 30px;
-        }
-
-        .result-item {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-
-        .result-item:hover {
-            transform: scale(1.02);
-        }
-
-        .result-item.best {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            border: 3px solid #00b894;
-            position: relative;
-        }
-
-        .result-item.best::before {
-            content: '🏆 EN UYGUN';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #00b894;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .result-info h3 {
-            margin-bottom: 5px;
-            color: #2d3436;
-        }
-
-        .result-price {
-            font-size: 2em;
-            font-weight: 700;
-            color: #00b894;
-        }
-
-        .result-item.best .result-price {
-            color: #006442;
-        }
-
-        .unit-price {
-            font-size: 0.9em;
-            color: #636e72;
-            margin-top: 5px;
-        }
-
-        .savings {
-            background: #ff7675;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: inline-block;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #636e72;
-        }
-
-        .empty-state svg {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .market-inputs {
-                grid-template-columns: 1fr;
-            }
-
-            .result-item {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-        }
-
-        .info-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-box p {
-            color: #856404;
-            margin: 5px 0;
-        }
-    </style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+    background:linear-gradient(135deg,#10131f,#1f2a44,#40295f);
+    min-height:100vh;
+    color:#fff;
+    padding:18px;
+}
+.container{max-width:1200px;margin:auto}
+.hero{
+    text-align:center;
+    padding:28px 15px;
+}
+.hero h1{
+    font-size:34px;
+    margin-bottom:8px;
+}
+.hero p{
+    opacity:.85;
+    font-size:16px;
+}
+.glass{
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:24px;
+    padding:22px;
+    margin-bottom:18px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+.section-title{
+    font-size:22px;
+    margin-bottom:15px;
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:14px;
+}
+input,select{
+    width:100%;
+    padding:14px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.92);
+    color:#111;
+    font-size:16px;
+}
+label{
+    font-size:13px;
+    opacity:.85;
+    margin-bottom:6px;
+    display:block;
+}
+.btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:16px;
+    font-size:16px;
+    font-weight:700;
+    margin-top:10px;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,#00c853,#00b0ff);
+}
+.btn.secondary{
+    background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.25);
+}
+.btn.danger{
+    background:linear-gradient(135deg,#ff416c,#ff4b2b);
+}
+.market-row{
+    background:rgba(255,255,255,.10);
+    padding:14px;
+    border-radius:18px;
+    margin-bottom:12px;
+}
+.market-name-badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.18);
+    margin-bottom:10px;
+    font-weight:700;
+}
+.results{
+    display:none;
+}
+.result-card{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:14px;
+}
+.best{
+    border:2px solid #00e676;
+    background:linear-gradient(135deg,rgba(0,230,118,.25),rgba(0,176,255,.20));
+}
+.price{
+    font-size:30px;
+    font-weight:900;
+    margin-top:8px;
+}
+.small{
+    opacity:.78;
+    font-size:14px;
+    margin-top:5px;
+}
+.badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:999px;
+    background:#00c853;
+    color:white;
+    font-size:13px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+.saving{
+    margin-top:8px;
+    color:#00ff9d;
+    font-weight:800;
+}
+.list-item{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px;
+    border-radius:15px;
+    background:rgba(255,255,255,.10);
+    margin-bottom:8px;
+}
+.tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:15px;
+}
+.tab{
+    flex:1;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(255,255,255,.12);
+    text-align:center;
+    font-weight:800;
+    cursor:pointer;
+}
+.tab.active{
+    background:linear-gradient(135deg,#00c853,#00b0ff);
+}
+.hidden{display:none}
+.footer-note{
+    text-align:center;
+    opacity:.6;
+    font-size:12px;
+    margin-top:25px;
+}
+@media(max-width:700px){
+    .hero h1{font-size:28px}
+    .price{font-size:26px}
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🛒 Market Fiyat Karşılaştırma</h1>
-            <p>En uygun fiyatı bul, bütçeni koru!</p>
-        </div>
+<div class="container">
 
-        <div class="card">
-            <div class="input-group">
-                <label for="productName">Ürün Adı</label>
-                <input type="text" id="productName" placeholder="Örn: Süt, Yağ, Un vb." />
-            </div>
+    <div class="hero">
+        <h1>🛒 Market Avcısı PRO</h1>
+        <p>Ürün, gramaj ve market fiyatlarını karşılaştır. En ucuz sepeti bul.</p>
+    </div>
 
-            <div class="info-box">
-                <p><strong>💡 İpucu:</strong> Gram veya birim fiyatlarını karşılaştırmak için ürün miktarını girin!</p>
-            </div>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('single')">Tek Ürün</div>
+        <div class="tab" onclick="showTab('basket')">Sepet</div>
+    </div>
 
-            <div class="input-group">
-                <label>Market Fiyatları (Market Adı, Fiyat, Miktar-opsiyonel)</label>
-                <div class="market-inputs" id="marketInputs">
-                    <div class="market-input">
-                        <input type="text" placeholder="Market adı" class="market-name" />
-                        <input type="number" placeholder="Fiyat (₺)" class="market-price" step="0.01" min="0" />
-                        <input type="number" placeholder="Miktar (g/ml)" class="market-quantity" min="0" />
-                    </div>
-                    <div class="market-input">
-                        <input type="text" placeholder="Market adı" class="market-name" />
-                        <input type="number" placeholder="Fiyat (₺)" class="market-price" step="0.01" min="0" />
-                        <input type="number" placeholder="Miktar (g/ml)" class="market-quantity" min="0" />
-                    </div>
-                    <div class="market-input">
-                        <input type="text" placeholder="Market adı" class="market-name" />
-                        <input type="number" placeholder="Fiyat (₺)" class="market-price" step="0.01" min="0" />
-                        <input type="number" placeholder="Miktar (g/ml)" class="market-quantity" min="0" />
-                    </div>
+    <!-- TEK ÜRÜN -->
+    <div id="singleTab">
+        <div class="glass">
+            <h2 class="section-title">🔍 Ürün Bilgisi</h2>
+
+            <div class="grid">
+                <div>
+                    <label>Ürün Adı</label>
+                    <input id="productName" placeholder="Örn: Süt, Yağ, Kahve">
+                </div>
+                <div>
+                    <label>Barkod / Kod</label>
+                    <input id="barcode" placeholder="İsteğe bağlı">
+                </div>
+                <div>
+                    <label>Birim</label>
+                    <select id="unitType">
+                        <option value="g">Gram / Kilogram</option>
+                        <option value="ml">ML / Litre</option>
+                        <option value="adet">Adet</option>
+                    </select>
                 </div>
             </div>
-
-            <button class="btn" onclick="compareMarkets()">Karşılaştır ve En Uygununu Bul</button>
-            <button class="btn btn-secondary" onclick="addMarketInput()">+ Market Ekle</button>
-            <button class="btn btn-secondary" onclick="clearAll()">Temizle</button>
         </div>
 
-        <div class="card results" id="results" style="display: none;">
-            <h2 style="margin-bottom: 20px; color: #2d3436;">📊 Karşılaştırma Sonuçları</h2>
-            <div id="resultsList"></div>
+        <div class="glass">
+            <h2 class="section-title">🏪 Market Fiyatları</h2>
+            <div id="marketRows"></div>
+
+            <button class="btn secondary" onclick="addMarketRow()">+ Market Ekle</button>
+            <button class="btn" onclick="compareSingle()">Karşılaştır</button>
+            <button class="btn danger" onclick="clearSingle()">Temizle</button>
+        </div>
+
+        <div class="glass results" id="singleResults">
+            <h2 class="section-title">📊 Sonuçlar</h2>
+            <div id="singleResultList"></div>
         </div>
     </div>
 
-    <script>
-        function addMarketInput() {
-            const container = document.getElementById('marketInputs');
-            const newInput = document.createElement('div');
-            newInput.className = 'market-input';
-            newInput.innerHTML = `
-                <input type="text" placeholder="Market adı" class="market-name" />
-                <input type="number" placeholder="Fiyat (₺)" class="market-price" step="0.01" min="0" />
-                <input type="number" placeholder="Miktar (g/ml)" class="market-quantity" min="0" />
-            `;
-            container.appendChild(newInput);
-        }
+    <!-- SEPET -->
+    <div id="basketTab" class="hidden">
+        <div class="glass">
+            <h2 class="section-title">🧺 Sepete Ürün Ekle</h2>
 
-        function compareMarkets() {
-            const productName = document.getElementById('productName').value.trim();
-            const marketInputs = document.querySelectorAll('.market-input');
-            
-            const markets = [];
-            marketInputs.forEach(input => {
-                const name = input.querySelector('.market-name').value.trim();
-                const price = parseFloat(input.querySelector('.market-price').value);
-                const quantity = parseFloat(input.querySelector('.market-quantity').value);
-                
-                if (name && price > 0) {
-                    markets.push({
-                        name: name,
-                        price: price,
-                        quantity: quantity || null
-                    });
+            <div class="grid">
+                <div>
+                    <label>Ürün</label>
+                    <input id="basketProduct" placeholder="Örn: Süt">
+                </div>
+                <div>
+                    <label>Market</label>
+                    <select id="basketMarket">
+                        <option>Migros</option>
+                        <option>A101</option>
+                        <option>BİM</option>
+                        <option>Şok</option>
+                        <option>CarrefourSA</option>
+                        <option>Hakmar</option>
+                        <option>Diğer</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Fiyat ₺</label>
+                    <input id="basketPrice" type="number" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+
+            <button class="btn" onclick="addBasketItem()">Sepete Ekle</button>
+            <button class="btn danger" onclick="clearBasket()">Sepeti Temizle</button>
+        </div>
+
+        <div class="glass">
+            <h2 class="section-title">📦 Sepet Listesi</h2>
+            <div id="basketList"></div>
+        </div>
+
+        <div class="glass results" id="basketResults">
+            <h2 class="section-title">🏆 En Uygun Market Sepeti</h2>
+            <div id="basketResultList"></div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        Market Avcısı PRO — fiyatları elle girerek gerçek zamanlı karşılaştırma yapar.
+    </div>
+
+</div>
+
+<script>
+let basket = [];
+
+const defaultMarkets = ["Migros","A101","BİM","Şok","CarrefourSA"];
+
+window.onload = function(){
+    defaultMarkets.forEach(m => addMarketRow(m));
+};
+
+function showTab(tab){
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    if(tab === "single"){
+        document.querySelectorAll(".tab")[0].classList.add("active");
+        document.getElementById("singleTab").classList.remove("hidden");
+        document.getElementById("basketTab").classList.add("hidden");
+    }else{
+        document.querySelectorAll(".tab")[1].classList.add("active");
+        document.getElementById("basketTab").classList.remove("hidden");
+        document.getElementById("singleTab").classList.add("hidden");
+    }
+}
+
+function addMarketRow(name=""){
+    const div = document.createElement("div");
+    div.className = "market-row";
+    div.innerHTML = `
+        <span class="market-name-badge">🏪 Market</span>
+        <div class="grid">
+            <div>
+                <label>Market Adı</label>
+                <input class="mName" value="${name}" placeholder="Market adı">
+            </div>
+            <div>
+                <label>Fiyat ₺</label>
+                <input class="mPrice" type="number" step="0.01" placeholder="0.00">
+            </div>
+            <div>
+                <label>Miktar</label>
+                <input class="mQty" type="number" step="0.01" placeholder="Örn: 1000">
+            </div>
+        </div>
+    `;
+    document.getElementById("marketRows").appendChild(div);
+}
+
+function compareSingle(){
+    const product = document.getElementById("productName").value.trim();
+    const unit = document.getElementById("unitType").value;
+    const rows = document.querySelectorAll(".market-row");
+
+    if(!product){
+        alert("Ürün adı gir.");
+        return;
+    }
+
+    let data = [];
+
+    rows.forEach(row=>{
+        const name = row.querySelector(".mName").value.trim();
+        const price = parseFloat(row.querySelector(".mPrice").value);
+        const qty = parseFloat(row.querySelector(".mQty").value);
+
+        if(name && price > 0){
+            let unitPrice = price;
+
+            if(qty > 0){
+                if(unit === "g" || unit === "ml"){
+                    unitPrice = price / qty * 1000;
+                }else{
+                    unitPrice = price / qty;
                 }
-            });
-
-            if (markets.length === 0) {
-                alert('Lütfen en az bir market bilgisi girin!');
-                return;
             }
 
-            if (!productName) {
-                alert('Lütfen ürün adını girin!');
-                return;
-            }
-
-            // Fiyata göre sırala
-            markets.sort((a, b) => {
-                if (a.quantity && b.quantity) {
-                    return (a.price / a.quantity) - (b.price / b.quantity);
-                }
-                return a.price - b.price;
+            data.push({
+                name,
+                price,
+                qty: qty || null,
+                unitPrice
             });
-
-            displayResults(productName, markets);
         }
+    });
 
-        function displayResults(productName, markets) {
-            const resultsDiv = document.getElementById('results');
-            const resultsListDiv = document.getElementById('resultsList');
-            
-            resultsDiv.style.display = 'block';
-            resultsListDiv.innerHTML = '';
+    if(data.length < 2){
+        alert("Karşılaştırma için en az 2 market fiyatı gir.");
+        return;
+    }
 
-            const bestMarket = markets[0];
-            const maxSavings = markets[markets.length - 1].price - bestMarket.price;
+    data.sort((a,b)=>a.unitPrice-b.unitPrice);
 
-            markets.forEach((market, index) => {
-                const resultItem = document.createElement('div');
-                resultItem.className = 'result-item' + (index === 0 ? ' best' : '');
-                
-                const savings = market.price - bestMarket.price;
-                let unitPriceHTML = '';
-                
-                if (market.quantity) {
-                    const unitPrice = (market.price / market.quantity).toFixed(4);
-                    unitPriceHTML = `<div class="unit-price">Birim Fiyat: ${unitPrice} ₺/${market.quantity >= 1000 ? 'kg' : 'g'}</div>`;
-                }
+    const best = data[0];
+    const list = document.getElementById("singleResultList");
+    list.innerHTML = "";
 
-                const savingsHTML = savings > 0 ? 
-                    `<div class="savings">+${savings.toFixed(2)} ₺ daha pahalı</div>` : '';
+    data.forEach((item,index)=>{
+        const diff = item.unitPrice - best.unitPrice;
+        const percent = diff > 0 ? ((diff / item.unitPrice) * 100).toFixed(1) : 0;
 
-                resultItem.innerHTML = `
-                    <div class="result-info">
-                        <h3>${market.name}</h3>
-                        <div>${productName}${market.quantity ? ` (${market.quantity} ${market.quantity >= 1000 ? 'kg' : 'g/ml'})` : ''}</div>
-                        ${unitPriceHTML}
-                        ${savingsHTML}
-                    </div>
-                    <div class="result-price">${market.price.toFixed(2)} ₺</div>
-                `;
-                
-                resultsListDiv.appendChild(resultItem);
-            });
+        let unitText = "adet";
+        if(unit === "g") unitText = "kg";
+        if(unit === "ml") unitText = "litre";
 
-            // Sonuçlara kaydır
-            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        const card = document.createElement("div");
+        card.className = "result-card " + (index === 0 ? "best" : "");
+        card.innerHTML = `
+            ${index === 0 ? '<div class="badge">🏆 EN UYGUN</div>' : ""}
+            <h3>${item.name}</h3>
+            <div class="small">${product} ${item.qty ? "— " + item.qty + " " + unit : ""}</div>
+            <div class="price">${item.price.toFixed(2)} ₺</div>
+            <div class="small">Birim fiyat: ${item.unitPrice.toFixed(2)} ₺ / ${unitText}</div>
+            ${diff > 0 ? `<div class="saving">Bu seçenek ${diff.toFixed(2)} ₺ / ${unitText} daha pahalı. En ucuzla fark: %${percent}</div>` : ""}
+        `;
+        list.appendChild(card);
+    });
 
-        function clearAll() {
-            document.getElementById('productName').value = '';
-            document.querySelectorAll('.market-name').forEach(input => input.value = '');
-            document.querySelectorAll('.market-price').forEach(input => input.value = '');
-            document.querySelectorAll('.market-quantity').forEach(input => input.value = '');
-            document.getElementById('results').style.display = 'none';
-        }
+    document.getElementById("singleResults").style.display = "block";
+    document.getElementById("singleResults").scrollIntoView({behavior:"smooth"});
+}
 
-        // Enter tuşu ile karşılaştırma
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                compareMarkets();
+function clearSingle(){
+    document.getElementById("productName").value = "";
+    document.getElementById("barcode").value = "";
+    document.getElementById("marketRows").innerHTML = "";
+    defaultMarkets.forEach(m => addMarketRow(m));
+    document.getElementById("singleResults").style.display = "none";
+}
+
+function addBasketItem(){
+    const product = document.getElementById("basketProduct").value.trim();
+    const market = document.getElementById("basketMarket").value;
+    const price = parseFloat(document.getElementById("basketPrice").value);
+
+    if(!product || !(price > 0)){
+        alert("Ürün ve fiyat gir.");
+        return;
+    }
+
+    basket.push({product, market, price});
+    document.getElementById("basketProduct").value = "";
+    document.getElementById("basketPrice").value = "";
+
+    renderBasket();
+    compareBasket();
+}
+
+function renderBasket(){
+    const list = document.getElementById("basketList");
+    list.innerHTML = "";
+
+    if(basket.length === 0){
+        list.innerHTML = '<div class="small">Henüz ürün eklenmedi.</div>';
+        return;
+    }
+
+    basket.forEach((item,index)=>{
+        const div = document.createElement("div");
+        div.className = "list-item";
+        div.innerHTML = `
+            <div>
+                <strong>${item.product}</strong>
+                <div class="small">${item.market}</div>
+            </div>
+            <div>
+                <strong>${item.price.toFixed(2)} ₺</strong>
+                <button onclick="removeBasketItem(${index})" style="margin-left:8px;border:none;border-radius:8px;padding:6px;background:#ff4b2b;color:white;">Sil</button>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+}
+
+function removeBasketItem(index){
+    basket.splice(index,1);
+    renderBasket();
+    compareBasket();
+}
+
+function compareBasket(){
+    const totals = {};
+
+    basket.forEach(item=>{
+        if(!totals[item.market]) totals[item.market] = 0;
+        totals[item.market] += item.price;
+    });
+
+    const entries = Object.entries(totals).sort((a,b)=>a[1]-b[1]);
+    const resultBox = document.getElementById("basketResults");
+    const resultList = document.getElementById("basketResultList");
+
+    if(entries.length === 0){
+        resultBox.style.display = "none";
+        return;
+    }
+
+    resultBox.style.display = "block";
+    resultList.innerHTML = "";
+
+    const best = entries[0];
+
+    entries.forEach(([market,total],index)=>{
+        const diff = total - best[1];
+
+        const div = document.createElement("div");
+        div.className = "result-card " + (index === 0 ? "best" : "");
+        div.innerHTML = `
+            ${index === 0 ? '<div class="badge">🏆 EN UCUZ SEPET</div>' : ""}
+            <h3>${market}</h3>
+            <div class="price">${total.toFixed(2)} ₺</div>
+            ${diff > 0 ? `<div class="saving">${best[0]} marketine göre ${diff.toFixed(2)} ₺ daha pahalı</div>` : ""}
+        `;
+        resultList.appendChild(div);
+    });
+}
+
+function clearBasket(){
+    basket = [];
+    renderBasket();
+    document.getElementById("basketResults").style.display = "none";
+}
+
+renderBasket();
+</script>
+</body>
+</html>
